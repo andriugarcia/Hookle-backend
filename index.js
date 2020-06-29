@@ -249,7 +249,7 @@ app.get('/likes', async (req, res) => {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
     console.log(payload)
     let session = driver.session();
-    const result = await session.run(queries.likes, { emailParam: payload })
+    const result = await session.run(queries.likesRating, { emailParam: payload })
     session.close()
     let nodes = result.records.map(record => (record._fields[0].properties))
     res.send(nodes);
@@ -264,7 +264,7 @@ app.get('/dislikes', async (req, res) => {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
       console.log(payload)
       let session = driver.session();
-      const result = await session.run(queries.dislikes, { emailParam: payload })
+      const result = await session.run(queries.dislikesRating, { emailParam: payload })
       session.close()
       let nodes = result.records.map(record => (record._fields[0].properties))
       res.send(nodes);            

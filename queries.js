@@ -101,6 +101,12 @@ const signin = 'MATCH (u:User { email: $emailParam }) RETURN u';
 
 const likes = `MATCH (n:User {email: $emailParam})-[r:LIKES]->(c)
               RETURN c`;
+const likesRating = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
+                    WHERE r.rating >= 5
+                    RETURN c`;
+const dislikesRating = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
+                    WHERE r.rating <= 5
+                    RETURN c`;
 const dislikes = `MATCH (n:User {email: $emailParam})-[r:DISLIKES]->(c)
               RETURN c`;
 const favorites = `MATCH (n:User {email: $emailParam})-[r:FAVORITE]->(c)
@@ -126,5 +132,5 @@ const buy = `MATCH (u: User{ email: $emailParam })
 
 
 module.exports = {
-  stack, populars, signup, signin, likes, dislikes, favorites, bought, like, dislike, favorite, buy, random, fullstack, vote, stackRating, popularsRating
+  stack, populars, signup, signin, likes, dislikes, favorites, bought, like, dislike, favorite, buy, random, fullstack, vote, stackRating, popularsRating, likesRating, dislikesRating
 }
