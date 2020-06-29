@@ -435,8 +435,8 @@ app.get('/product/:code', async (req, res) => {
   //   res.sendStatus(404);
   // }
 })
-
-app.listen(3010);
-console.log('Server Started at Port 3010');
+let port = process.env.PORT || 3010;
+app.listen(port);
+console.log('Server Started at Port ' + port);
 
 module.exports = app;
