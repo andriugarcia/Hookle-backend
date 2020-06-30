@@ -103,16 +103,16 @@ const likes = `MATCH (n:User {email: $emailParam})-[r:LIKES]->(c)
               RETURN c`;
 const likesRating = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
                     WHERE r.rating >= 5
-                    RETURN c`;
+                    RETURN c ORDER BY r.rating DESC`;
 const dislikesRating = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
                     WHERE r.rating <= 5
-                    RETURN c`;
+                    RETURN c ORDER BY r.rating DESC`;
 const dislikes = `MATCH (n:User {email: $emailParam})-[r:DISLIKES]->(c)
               RETURN c`;
 const favorites = `MATCH (n:User {email: $emailParam})-[r:FAVORITE]->(c)
               RETURN c`;
 const bought = `MATCH (n:User {email: $emailParam})-[r:BUY]->(c)
-              RETURN c`;
+              RETURN c `;
 const vote = `MATCH (u: User{ email: $emailParam })
               MATCH (c: Clothing{ code: $clothingParam })
               CREATE (u)-[r:LIKES {rating: $ratingParam}]->(c)`
