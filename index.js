@@ -1,8 +1,5 @@
 'use strict'
 
-const users = require('./users.json')
-const clothes = require('./clothes.json')
-
 const express=require('express')
 const app=express()
 // const user=require('./controllers/user')
@@ -241,6 +238,38 @@ app.post('/signin', async (req, res) => {
     res.status(400).send({
       message: 'La contraseña no es correcta'
     })
+  }
+})
+
+app.get('/historial/:type', async (req, res) => {
+  try {
+    const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
+    console.log(payload)
+    let session = driver.session();
+
+    let result;
+    switch (req.params.type) {
+      case 'historicalAsc':
+        result = await session.run(queries.historicalAsc, { emailParam: payload })
+        break;
+      case 'ratingAsc':
+        result = await session.run(queries.ratingAsc, { emailParam: payload })
+        break;
+      case 'ratingDesc':
+        result = await session.run(queries.ratingDesc, { emailParam: payload })
+        break;
+      default:
+        result = await session.run(queries.historicalDesc, { emailParam: payload })
+        break;
+    }
+    session.close()
+    let nodes = result.records.map(record => (record._fields[0].properties))
+    res.send(nodes);
+
+
+  } catch(err) {
+    console.error(err);
+    res.send(401);
   }
 })
 

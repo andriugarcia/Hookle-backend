@@ -107,6 +107,14 @@ const likesRating = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:C
 const dislikesRating = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
                     WHERE r.rating <= 5
                     RETURN c ORDER BY r.rating DESC`;
+const historicalAsc = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
+                    RETURN c ORDER BY r ASC`
+const historicalDesc = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
+                    RETURN c ORDER BY r DESC`
+const ratingAsc = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
+                    RETURN c, r.rating ORDER BY r.rating ASC`
+const ratingDesc = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
+                    RETURN c, r.rating ORDER BY r.rating DESC`
 const dislikes = `MATCH (n:User {email: $emailParam})-[r:DISLIKES]->(c)
               RETURN c`;
 const favorites = `MATCH (n:User {email: $emailParam})-[r:FAVORITE]->(c)
@@ -115,6 +123,8 @@ const bought = `MATCH (n:User {email: $emailParam})-[r:BUY]->(c)
               RETURN c `;
 const vote = `MATCH (u: User{ email: $emailParam })
               MATCH (c: Clothing{ code: $clothingParam })
+              MATCH(u) - [likeExist] - > (c)
+              DETACH DELETE likeExist
               CREATE (u)-[r:LIKES {rating: $ratingParam}]->(c)`
 const like = `MATCH (u: User{ email: $emailParam })
               MATCH (c: Clothing{ code: $clothingParam })
@@ -132,5 +142,8 @@ const buy = `MATCH (u: User{ email: $emailParam })
 
 
 module.exports = {
-  stack, populars, signup, signin, likes, dislikes, favorites, bought, like, dislike, favorite, buy, random, fullstack, vote, stackRating, popularsRating, likesRating, dislikesRating
+  stack, populars, signup, signin, likes, dislikes, favorites, bought,
+  like, dislike, favorite, buy, random, fullstack, vote, stackRating, 
+  popularsRating, likesRating, dislikesRating,
+  historicalAsc, historicalDesc, ratingAsc, ratingDesc
 }
