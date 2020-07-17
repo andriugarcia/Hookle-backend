@@ -10,13 +10,13 @@ const stack = `MATCH (u:User {email: $emailParam})-[:LIKES]->(lc:Clothing)<-[:LI
               ORDER BY frequency DESC
               LIMIT 20`;
 
-const stackRating = `MATCH (u1:User {email:$emailParam})-[r:LIKES]->(m:Clothing)
+const stackRating = (filter) => `MATCH (u1:User {email:$emailParam})-[r:LIKES]->(c:Clothing)
                     WITH u1, avg(r.rating) AS u1_mean
 
-                    MATCH (u1)-[r1:LIKES]->(m:Clothing)<-[r2:LIKES]-(u2)
+                    MATCH (u1)-[r1:LIKES]->(c:Clothing)<-[r2:LIKES]-(u2)
                     WITH u1, u1_mean, u2, COLLECT({r1: r1, r2: r2}) AS ratings
 
-                    MATCH (u2)-[r:LIKES]->(m:Clothing)
+                    MATCH (u2)-[r:LIKES]->(c:Clothing)
                     WITH u1, u1_mean, u2, avg(r.rating) AS u2_mean, ratings
 
                     UNWIND ratings AS r
@@ -28,9 +28,9 @@ const stackRating = `MATCH (u1:User {email:$emailParam})-[r:LIKES]->(m:Clothing)
                     WITH u1, u2, nom/denom AS pearson
                     ORDER BY pearson DESC LIMIT 10
 
-                    MATCH (u2)-[r:LIKES]->(m:Clothing) WHERE NOT EXISTS( (u1)-[:LIKES]->(m) )
+                    MATCH (u2)-[r:LIKES]->(c:Clothing) WHERE NOT EXISTS( (u1)-[:LIKES]->(c)) ${filter}
 
-                    RETURN m, SUM( pearson * r.rating) AS score
+                    RETURN c, SUM( pearson * r.rating) AS score
                     ORDER BY score DESC LIMIT 25`;
 
 const populars = `MATCH (a:User)-[r:LIKES]->(c:Clothing)
@@ -38,17 +38,17 @@ const populars = `MATCH (a:User)-[r:LIKES]->(c:Clothing)
                   RETURN c, SIZE(COLLECT(a)) as likes
                   ORDER BY likes DESC LIMIT 20`;
 
-const popularsRating = `MATCH (a:User)-[r:LIKES]->(c:Clothing)
-                        WHERE NOT (:User {email: $emailParam})-[]->(c)
+const popularsRating = (filter) => `MATCH (a:User)-[r:LIKES]->(c:Clothing)
+                        WHERE NOT (:User {email: $emailParam})-[]->(c) ${filter}
                         WITH c, COLLECT(r.rating) as likes
                         UNWIND likes AS likesret
                         RETURN c, AVG(likesret) AS len
                         ORDER BY len DESC LIMIT 10`;
 
-const random = `MATCH   (n:Clothing)
-                WHERE   (NOT (n)-[]-())
-                WITH n, rand() AS number
-                RETURN n 
+const random = (filter) => `MATCH   (c:Clothing)
+                WHERE   (NOT (c)-[]-()) ${filter}
+                WITH c, rand() AS number
+                RETURN  
                 ORDER BY number
                 LIMIT 5`;
         
@@ -126,6 +126,8 @@ const vote = `MATCH (u: User{ email: $emailParam })
               MATCH(u) - [likeExist] - > (c)
               DETACH DELETE likeExist
               CREATE (u)-[r:LIKES {rating: $ratingParam}]->(c)`
+const updateFilters = `MATCH (u: User{ email: $emailParam })
+                      SET u.filters = $filtersParam`
 const like = `MATCH (u: User{ email: $emailParam })
               MATCH (c: Clothing{ code: $clothingParam })
               CREATE (u)-[r:LIKES]->(c)`
@@ -144,6 +146,6 @@ const buy = `MATCH (u: User{ email: $emailParam })
 module.exports = {
   stack, populars, signup, signin, likes, dislikes, favorites, bought,
   like, dislike, favorite, buy, random, fullstack, vote, stackRating, 
-  popularsRating, likesRating, dislikesRating,
+  popularsRating, likesRating, dislikesRating, updateFilters,
   historicalAsc, historicalDesc, ratingAsc, ratingDesc
 }

@@ -13,6 +13,7 @@ var neo4j = require('neo4j-driver');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
+const filterQuery=require('./services/filterQuery')
 const service=require('./services')
 const queries=require('./queries');
 
@@ -43,9 +44,12 @@ app.get('/stack', async (req,res) => {
   try {
     let payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
     let session = driver.session();
-    let result = await session.run(queries.stackRating, { emailParam: payload })
-    let populars = await session.run(queries.popularsRating, { emailParam: payload })
-    let random = await session.run(queries.random)
+    let user = await session.run(queries.signin, { emailParam: payload })
+    const filter = filterQuery(user.records._fields[0].properties.filters)
+    console.log(filter)
+    let result = await session.run(queries.stackRating(filter), { emailParam: payload })
+    let populars = await session.run(queries.popularsRating(filter), { emailParam: payload })
+    let random = await session.run(queries.random(filter))
     session.close()
   
     let nodes = [
@@ -139,7 +143,11 @@ app.get('/populars', async (req,res) => {
   try {
     let payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
     let session = driver.session();
-    let result = await session.run(queries.popularsRating, { emailParam: payload })
+
+    let user = await session.run(queries.signin, { emailParam: payload })
+    const filter = filterQuery(user.records._fields[0].properties.filters)
+
+    let result = await session.run(queries.popularsRating(filter), { emailParam: payload })
     session.close()
   
     let nodes = result.records.map(record => (record._fields[0].properties))
@@ -196,7 +204,8 @@ app.get('/populars', async (req,res) => {
 //     res.sendStatus(401);
 //   }
 // })
-    
+
+
 app.post('/signup', async (req, res) => {
   const user={
     email: req.body.email,
@@ -212,7 +221,7 @@ app.post('/signup', async (req, res) => {
       
   res.status(200).send({
     message: 'User created',
-    token: service.createToken(user)
+    token: service.createToken(user),
   })
 })
 
@@ -335,6 +344,23 @@ app.get('/bought', async (req, res) => {
   }
 })
 
+app.get('/getMe', async (req, res) => {
+  try {
+    const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
+    console.log(payload)
+    let session = driver.session();
+    let result = await session.run(queries.signin, {
+      emailParam: payload
+    })      
+    session.close()
+    res.send(result.records[0]._fields[0].properties);
+          
+  } catch(err) {
+    console.error(err);
+    res.send(401);
+  }
+})
+
 app.post('/vote', async (req, res) => {
   try {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
@@ -368,6 +394,24 @@ app.post('/like', async (req, res) => {
     console.log("Relacionado exitosamente")
     res.sendStatus(200);
           
+  } catch(err) {
+    console.error(err);
+    res.send(401);
+  }
+})
+
+app.post('/updateFilters', async (req, res) => {
+  try {
+    const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
+    console.log(payload)
+    let session = driver.session();
+    await session.run(queries.updateFilters, {
+      emailParam: payload,
+      filtersParam: req.body.filters
+    })
+    session.close()
+    console.log("Actualizado exitosamente")
+    res.sendStatus(200);
   } catch(err) {
     console.error(err);
     res.send(401);
