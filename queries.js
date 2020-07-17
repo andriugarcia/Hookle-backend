@@ -101,20 +101,20 @@ const signin = 'MATCH (u:User { email: $emailParam }) RETURN u';
 
 const likes = `MATCH (n:User {email: $emailParam})-[r:LIKES]->(c)
               RETURN c`;
-const likesRating = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
+const likesRating = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
                     WHERE r.rating >= 5
                     RETURN c ORDER BY r.rating DESC`;
-const dislikesRating = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
+const dislikesRating = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
                     WHERE r.rating <= 5
                     RETURN c ORDER BY r.rating DESC`;
-const historicalAsc = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
+const historicalAsc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
                     RETURN c ORDER BY r ASC`
-const historicalDesc = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
+const historicalDesc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
                     RETURN c ORDER BY r DESC`
-const ratingAsc = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
-                    RETURN c, r.rating ORDER BY r.rating ASC`
-const ratingDesc = `MATCH (u:User {email: "gvdrews@gmail.com"})-[r:LIKES]->(c:Clothing)
-                    RETURN c, r.rating ORDER BY r.rating DESC`
+const ratingAsc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
+                    RETURN c ORDER BY r.rating ASC`
+const ratingDesc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
+                    RETURN c ORDER BY r.rating DESC`
 const dislikes = `MATCH (n:User {email: $emailParam})-[r:DISLIKES]->(c)
               RETURN c`;
 const favorites = `MATCH (n:User {email: $emailParam})-[r:FAVORITE]->(c)
