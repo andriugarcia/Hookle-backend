@@ -45,7 +45,7 @@ app.get('/stack', async (req,res) => {
     let payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
     let session = driver.session();
     let user = await session.run(queries.signin, { emailParam: payload })
-    const filter = filterQuery(user.records._fields[0].properties.filters)
+    const filter = filterQuery(user.records[0]._fields[0].properties.filters, user.records[0]._fields[0].properties.genre)
     console.log(filter)
     let result = await session.run(queries.stackRating(filter), { emailParam: payload })
     let populars = await session.run(queries.popularsRating(filter), { emailParam: payload })
@@ -145,7 +145,7 @@ app.get('/populars', async (req,res) => {
     let session = driver.session();
 
     let user = await session.run(queries.signin, { emailParam: payload })
-    const filter = filterQuery(user.records._fields[0].properties.filters)
+    const filter = filterQuery(user.records[0]._fields[0].properties.filters, user.records[0]._fields[0].properties.genre)
 
     let result = await session.run(queries.popularsRating(filter), { emailParam: payload })
     session.close()
@@ -408,6 +408,24 @@ app.post('/updateFilters', async (req, res) => {
     await session.run(queries.updateFilters, {
       emailParam: payload,
       filtersParam: req.body.filters
+    })
+    session.close()
+    console.log("Actualizado exitosamente")
+    res.sendStatus(200);
+  } catch(err) {
+    console.error(err);
+    res.send(401);
+  }
+})
+
+app.post('/updateGenre', async (req, res) => {
+  try {
+    const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
+    console.log(payload)
+    let session = driver.session();
+    await session.run(queries.updateGenre, {
+      emailParam: payload,
+      genreParam: req.body.genre
     })
     session.close()
     console.log("Actualizado exitosamente")

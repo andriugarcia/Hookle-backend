@@ -46,9 +46,9 @@ const popularsRating = (filter) => `MATCH (a:User)-[r:LIKES]->(c:Clothing)
                         ORDER BY len DESC LIMIT 10`;
 
 const random = (filter) => `MATCH   (c:Clothing)
-                WHERE   (NOT (c)-[]-()) ${filter}
+                WHERE NOT (c)-[]-() ${filter}
                 WITH c, rand() AS number
-                RETURN  
+                RETURN c
                 ORDER BY number
                 LIMIT 5`;
         
@@ -72,7 +72,7 @@ const fullstack = `MATCH (u:User {email: $emailParam})-[:LIKES]->(lc:Clothing)<-
                   ORDER BY number
                   LIMIT 5`;
 
-const signup = 'CREATE(u:User {email: $emailParam, password: $passParam}) RETURN u.email';
+const signup = 'CREATE(u:User {email: $emailParam, password: $passParam, genre: "all", filters: []}) RETURN u.email';
 
 `MATCH (u1:User {email:"u1@gmail.com"})-[r:LIKES]->(m:Clothing)
 WITH u1, avg(r.rating) AS u1_mean
@@ -128,6 +128,8 @@ const vote = `MATCH (u: User{ email: $emailParam })
               CREATE (u)-[r:LIKES {rating: $ratingParam}]->(c)`
 const updateFilters = `MATCH (u: User{ email: $emailParam })
                       SET u.filters = $filtersParam`
+const updateGenre = `MATCH (u: User{ email: $emailParam })
+                      SET u.genre = $genreParam`
 const like = `MATCH (u: User{ email: $emailParam })
               MATCH (c: Clothing{ code: $clothingParam })
               CREATE (u)-[r:LIKES]->(c)`
@@ -146,6 +148,6 @@ const buy = `MATCH (u: User{ email: $emailParam })
 module.exports = {
   stack, populars, signup, signin, likes, dislikes, favorites, bought,
   like, dislike, favorite, buy, random, fullstack, vote, stackRating, 
-  popularsRating, likesRating, dislikesRating, updateFilters,
+  popularsRating, likesRating, dislikesRating, updateFilters, updateGenre,
   historicalAsc, historicalDesc, ratingAsc, ratingDesc
 }
