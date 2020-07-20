@@ -51,6 +51,7 @@ app.get('/stack', async (req,res) => {
     let populars = await session.run(queries.popularsRating(filter), { emailParam: payload })
     let random = await session.run(queries.random(filter))
     session.close()
+    console.log(result.records)
   
     let nodes = [
       ...result.records.map(record => (record._fields[0].properties)),
