@@ -65,6 +65,8 @@ const fullstack = `MATCH (u:User {email: $emailParam})-[:LIKES]->(lc:Clothing)<-
 
 const signup = 'CREATE(u:User {email: $emailParam, password: $passParam, genre: "all", filters: []}) RETURN u.email';
 
+const signupOauth = 'CREATE(u:User {email: $emailParam, genre: "all", filters: []}) RETURN u';
+
 `MATCH (u1:User {email:"u1@gmail.com"})-[r:LIKES]->(m:Clothing)
 WITH u1, avg(r.rating) AS u1_mean
 
@@ -130,12 +132,14 @@ const favorite = `MATCH (u: User{ email: $emailParam })
               CREATE (u)-[r:FAVORITE]->(c)`
 const buy = `MATCH (u: User{ email: $emailParam })
               MATCH (c: Clothing{ code: $clothingParam })
+              MATCH (u)-[del:BUY]->(c)
+              DETACH DELETE del
               CREATE (u)-[r:BUY]->(c)`
 
 
 
 module.exports = {
-  stack, populars, signup, signin, likes, dislikes, favorites, bought,
+  stack, populars, signup, signupOauth, signin, likes, dislikes, favorites, bought,
   like, dislike, favorite, buy, random, fullstack, vote, stackRating, 
   popularsRating, likesRating, dislikesRating, updateFilters, updateGenre,
   historicalAsc, historicalDesc, ratingAsc, ratingDesc

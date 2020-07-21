@@ -348,11 +348,15 @@ app.get('/bought', async (req, res) => {
 app.get('/getMe', async (req, res) => {
   try {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
-    console.log(payload)
     let session = driver.session();
     let result = await session.run(queries.signin, {
       emailParam: payload
-    })      
+    })
+    if (result.records.length == 0) {
+      result = await session.run(queries.signupOauth, {
+        emailParam: payload
+      })
+    }
     session.close()
     res.send(result.records[0]._fields[0].properties);
           
