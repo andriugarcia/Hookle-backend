@@ -20,8 +20,8 @@ const stackRating = (filter) => `MATCH (u1:User {email: $emailParam})-[x:LIKES]-
                                 ORDER BY similarity DESC
                                 LIMIT 10
 
-                                MATCH (u2)-[r:LIKES]->(m:Clothing) WHERE NOT EXISTS( (u1)-[:LIKES]->(m) )
-                                RETURN m, SUM( similarity * r.rating) AS score
+                                MATCH (u2)-[r:LIKES]->(c:Clothing) WHERE NOT EXISTS( (u1)-[:LIKES]->(c) ) ${filter}
+                                RETURN c, SUM( similarity * r.rating) AS score
                                 ORDER BY score DESC LIMIT 25`;
 
 const populars = `MATCH (a:User)-[r:LIKES]->(c:Clothing)
@@ -99,21 +99,21 @@ const likesRating = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
                     RETURN c ORDER BY r.rating DESC`;
 const dislikesRating = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
                     WHERE r.rating <= 5
-                    RETURN c ORDER BY r.rating DESC`;
+                    RETURN c ORDER BY r.rating DESC  SKIP $pageParam LIMIT 40`;
 const historicalAsc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
-                    RETURN c ORDER BY r ASC`
+                    RETURN c ORDER BY r ASC  SKIP $pageParam LIMIT 40`
 const historicalDesc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
-                    RETURN c ORDER BY r DESC`
+                    RETURN c ORDER BY r DESC  SKIP $pageParam LIMIT 40`
 const ratingAsc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
-                    RETURN c ORDER BY r.rating ASC`
+                    RETURN c ORDER BY r.rating ASC  SKIP $pageParam LIMIT 40`
 const ratingDesc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
-                    RETURN c ORDER BY r.rating DESC`
+                    RETURN c ORDER BY r.rating DESC  SKIP $pageParam LIMIT 40`
 const dislikes = `MATCH (n:User {email: $emailParam})-[r:DISLIKES]->(c)
               RETURN c`;
 const favorites = `MATCH (n:User {email: $emailParam})-[r:FAVORITE]->(c)
-              RETURN c`;
+              RETURN c SKIP $pageParam LIMIT 40`;
 const bought = `MATCH (n:User {email: $emailParam})-[r:BUY]->(c)
-              RETURN c `;
+              RETURN c SKIP $pageParam LIMIT 40`;
 const vote = `MATCH (u: User{ email: $emailParam })
               MATCH (c: Clothing{ code: $clothingParam })
               CREATE (u)-[r:LIKES {rating: $ratingParam}]->(c)`
@@ -130,6 +130,8 @@ const dislike = `MATCH (u: User{ email: $emailParam })
 const favorite = `MATCH (u: User{ email: $emailParam })
               MATCH (c: Clothing{ code: $clothingParam })
               CREATE (u)-[r:FAVORITE]->(c)`
+const unfavorite = `MATCH (u: User{ email: $emailParam })-[r:FAVORITE]->(c: Clothing{ code: $clothingParam })
+              DETACH DELETE r`
 const buy = `MATCH (u: User{ email: $emailParam })
               MATCH (c: Clothing{ code: $clothingParam })
               MATCH (u)-[del:BUY]->(c)
@@ -140,7 +142,7 @@ const buy = `MATCH (u: User{ email: $emailParam })
 
 module.exports = {
   stack, populars, signup, signupOauth, signin, likes, dislikes, favorites, bought,
-  like, dislike, favorite, buy, random, fullstack, vote, stackRating, 
+  like, dislike, favorite, unfavorite, buy, random, fullstack, vote, stackRating, 
   popularsRating, likesRating, dislikesRating, updateFilters, updateGenre,
   historicalAsc, historicalDesc, ratingAsc, ratingDesc
 }

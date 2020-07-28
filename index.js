@@ -12,11 +12,14 @@ var bodyParser = require('body-parser');
 var neo4j = require('neo4j-driver');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const bcrypt = require('bcrypt');
 
 const filterQuery=require('./services/filterQuery')
 const service=require('./services')
 const queries=require('./queries');
 
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -66,78 +69,20 @@ app.get('/stack', async (req,res) => {
 });
 
 app.get('/', async (req,res) => {
+  const msg = {
+    to: 'test@example.com',
+    from: 'test@example.com',
+    subject: 'Sending with Twilio SendGrid is Fun',
+    text: 'and easy to do anywhere, even with Node.js',
+    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+  };
   try {
-    let session = driver.session();
-    await session.run(`MATCH (u: User{ email: $emailParam })
-                      MATCH (c: Clothing{ code: $clothingParam })
-                      CREATE (u)-[r:LIKES {rating: $rate}]->(c)`, {
-      emailParam: "u1@gmail.com",
-      clothingParam: "B079RST3NH",
-      rate: neo4j.int(Math.round(Math.random() * 10))
-    })
-    await session.run(`MATCH (u: User{ email: $emailParam })
-                      MATCH (c: Clothing{ code: $clothingParam })
-                      CREATE (u)-[r:LIKES {rating: $rate}]->(c)`, {
-      emailParam: "u1@gmail.com",
-      clothingParam: "B086882SNQ",
-      rate: neo4j.int(Math.round(Math.random() * 10))
-    })
-    await session.run(`MATCH (u: User{ email: $emailParam })
-                      MATCH (c: Clothing{ code: $clothingParam })
-                      CREATE (u)-[r:LIKES {rating: $rate}]->(c)`, {
-      emailParam: "u1@gmail.com",
-      clothingParam: "B07XJ8RVXT",
-      rate: neo4j.int(Math.round(Math.random() * 10))
-    })
-    await session.run(`MATCH (u: User{ email: $emailParam })
-                      MATCH (c: Clothing{ code: $clothingParam })
-                      CREATE (u)-[r:LIKES {rating: $rate}]->(c)`, {
-      emailParam: "u1@gmail.com",
-      clothingParam: "B07K2N2163",
-      rate: neo4j.int(Math.round(Math.random() * 10))
-    })
-    await session.run(`MATCH (u: User{ email: $emailParam })
-                      MATCH (c: Clothing{ code: $clothingParam })
-                      CREATE (u)-[r:LIKES {rating: $rate}]->(c)`, {
-      emailParam: "u1@gmail.com",
-      clothingParam: "B072JGS75F",
-      rate: neo4j.int(Math.round(Math.random() * 10))
-    })
-    await session.run(`MATCH (u: User{ email: $emailParam })
-                      MATCH (c: Clothing{ code: $clothingParam })
-                      CREATE (u)-[r:LIKES {rating: $rate}]->(c)`, {
-      emailParam: "u1@gmail.com",
-      clothingParam: "B07SND6DCH",
-      rate: neo4j.int(Math.round(Math.random() * 10))
-    })
-    await session.run(`MATCH (u: User{ email: $emailParam })
-                      MATCH (c: Clothing{ code: $clothingParam })
-                      CREATE (u)-[r:LIKES {rating: $rate}]->(c)`, {
-      emailParam: "u1@gmail.com",
-      clothingParam: "B085RSDLN1",
-      rate: neo4j.int(Math.round(Math.random() * 10))
-    })
-    await session.run(`MATCH (u: User{ email: $emailParam })
-                      MATCH (c: Clothing{ code: $clothingParam })
-                      CREATE (u)-[r:LIKES {rating: $rate}]->(c)`, {
-      emailParam: "u1@gmail.com",
-      clothingParam: "B07Y5BVWP3",
-      rate: neo4j.int(Math.round(Math.random() * 10))
-    })
-    await session.run(`MATCH (u: User{ email: $emailParam })
-                      MATCH (c: Clothing{ code: $clothingParam })
-                      CREATE (u)-[r:LIKES {rating: $rate}]->(c)`, {
-      emailParam: "u1@gmail.com",
-      clothingParam: "B07V8HBVBT",
-      rate: neo4j.int(Math.round(Math.random() * 10))
-    })
-
-    session.close()  
-    res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(401);
+    await sgMail.send(msg);
   }
+  catch (err) {
+    console.error(err)
+  }
+  res.sendStatus(200)
 });
 
 app.get('/populars', async (req,res) => {
@@ -213,10 +158,13 @@ app.post('/signup', async (req, res) => {
     password: req.body.password
   }
 
+  let hash = await bcrypt.hash(user.password, 10);
+  console.log(hash)
+
   let session = driver.session();
   await session.run(queries.signup, {
     emailParam: user.email,
-    passParam: user.password
+    passParam: hash
   })
   session.close()
       
@@ -238,7 +186,9 @@ app.post('/signin', async (req, res) => {
   let user = result.records[0]._fields[0].properties
   console.log(user)
 
-  if (user.password == req.body.password) {
+  const passRes = await bcrypt.compare(req.body.password, user.password);
+
+  if (passRes) {
     res.status(201).send({
         message:'Login correcto',
         token: service.createToken(user)
@@ -251,25 +201,24 @@ app.post('/signin', async (req, res) => {
   }
 })
 
-app.get('/historial/:type', async (req, res) => {
+app.get('/historial/:type/:page', async (req, res) => {
   try {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
     console.log(payload)
     let session = driver.session();
-
     let result;
     switch (req.params.type) {
       case 'historicalAsc':
-        result = await session.run(queries.historicalAsc, { emailParam: payload })
+        result = await session.run(queries.historicalAsc, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40)  })
         break;
       case 'ratingAsc':
-        result = await session.run(queries.ratingAsc, { emailParam: payload })
+        result = await session.run(queries.ratingAsc, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40)  })
         break;
       case 'ratingDesc':
-        result = await session.run(queries.ratingDesc, { emailParam: payload })
+        result = await session.run(queries.ratingDesc, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40)  })
         break;
       default:
-        result = await session.run(queries.historicalDesc, { emailParam: payload })
+        result = await session.run(queries.historicalDesc, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40)  })
         break;
     }
     session.close()
@@ -314,12 +263,12 @@ app.get('/dislikes', async (req, res) => {
   }
 })
 
-app.get('/favorites', async (req, res) => {
+app.get('/favorites/:page', async (req, res) => {
   try {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
       console.log(payload)
       let session = driver.session();
-      const result = await session.run(queries.favorites, { emailParam: payload })
+      const result = await session.run(queries.favorites, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40) })
       session.close()
       let nodes = result.records.map(record => (record._fields[0].properties))
       res.send(nodes);
@@ -330,12 +279,12 @@ app.get('/favorites', async (req, res) => {
   }
 })
 
-app.get('/bought', async (req, res) => {
+app.get('/bought/:page', async (req, res) => {
   try {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
     console.log(payload)
     let session = driver.session();
-    const result = await session.run(queries.bought, { emailParam: payload })      
+    const result = await session.run(queries.bought, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40) })      
     session.close()
     let nodes = result.records.map(record => (record._fields[0].properties))
     res.send(nodes);
@@ -466,6 +415,25 @@ app.post('/fav', async (req, res) => {
       console.log(payload)
       let session = driver.session();
       await session.run(queries.favorite, {
+        emailParam: payload,
+        clothingParam: req.body.clothing
+      })
+      session.close()
+      console.log("Relacionado exitosamente")
+      res.sendStatus(200);
+
+  } catch(err) {
+    console.error(err);
+    res.send(401);
+  }
+})
+
+app.post('/unfav', async (req, res) => {
+  try {
+    const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
+      console.log(payload)
+      let session = driver.session();
+      await session.run(queries.unfavorite, {
         emailParam: payload,
         clothingParam: req.body.clothing
       })
