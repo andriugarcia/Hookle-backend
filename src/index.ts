@@ -10,7 +10,6 @@ dotenv.config({ path: __dirname + '/.env' })
 
 const server = Hapi.server({
     port: process.env.PORT || 3010,
-    host: 'localhost',
     app: {},
 })
 
