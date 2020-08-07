@@ -5,20 +5,42 @@ exports.default = [
     {
         method: 'GET',
         path: '/historial/{type}/{page}',
-        options: { auth: 'jwt' },
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
         handler: clothing_service_1.default.getHistorial,
     },
     {
         method: 'GET',
         path: '/favorites/{page}',
-        options: { auth: 'jwt' },
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
         handler: clothing_service_1.default.getFavorites,
     },
     {
         method: 'GET',
         path: '/bought/{page}',
-        options: { auth: 'jwt' },
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
         handler: clothing_service_1.default.getBought,
+    },
+    {
+        method: 'GET',
+        path: '/stack',
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
+        handler: clothing_service_1.default.getStack,
     },
 ];
 //# sourceMappingURL=clothing.controller.js.map

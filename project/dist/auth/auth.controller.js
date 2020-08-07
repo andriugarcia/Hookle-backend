@@ -6,7 +6,9 @@ exports.default = [
         method: 'POST',
         path: '/signup',
         handler: user_service_1.default.signup,
-        config: { auth: false },
+        options: {
+            auth: false,
+        },
     },
     {
         method: 'POST',
@@ -14,6 +16,30 @@ exports.default = [
         handler: user_service_1.default.login,
         options: {
             auth: 'simple',
+        },
+    },
+    {
+        method: 'POST',
+        path: '/verify',
+        handler: user_service_1.default.verify,
+        options: {
+            auth: 'jwt',
+        },
+    },
+    {
+        method: 'POST',
+        path: '/recover',
+        handler: user_service_1.default.recover,
+        options: {
+            auth: 'jwt',
+        },
+    },
+    {
+        method: 'POST',
+        path: '/sendRecoverPassword',
+        handler: user_service_1.default.sendRecoverPassword,
+        options: {
+            auth: false,
         },
     },
 ];

@@ -35,6 +35,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var database_1 = require("../../database");
 var clothing_queries_1 = require("./clothing.queries");
@@ -42,28 +49,51 @@ var neo4j_driver_1 = require("neo4j-driver");
 var getStack = function (filter, _a) {
     var emailParam = _a.emailParam;
     return __awaiter(this, void 0, void 0, function () {
-        var session, result, err_1;
+        var session, tx, stack, populars, random, err_1;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    _b.trys.push([0, 2, , 3]);
+                    _b.trys.push([0, 4, , 5]);
                     session = database_1.default.session();
-                    return [4 /*yield*/, session.run(clothing_queries_1.default.stack(filter), {
+                    tx = session.beginTransaction();
+                    return [4 /*yield*/, tx.run(clothing_queries_1.default.stack(filter), {
                             emailParam: emailParam,
                         })];
                 case 1:
-                    result = _b.sent();
-                    session.close();
-                    return [2 /*return*/, result.records.map(function (record) { return record._fields[0].properties; })];
+                    stack = _b.sent();
+                    return [4 /*yield*/, tx.run(clothing_queries_1.default.populars(filter), {
+                            emailParam: emailParam,
+                        })];
                 case 2:
+                    populars = _b.sent();
+                    return [4 /*yield*/, tx.run(clothing_queries_1.default.random(filter))];
+                case 3:
+                    random = _b.sent();
+                    session.close();
+                    return [2 /*return*/, __spreadArrays(stack.records.map(function (record) { return record._fields[0].properties; }), populars.records.map(function (record) { return record._fields[0].properties; }), random.records.map(function (record) { return record._fields[0].properties; }))];
+                case 4:
                     err_1 = _b.sent();
                     console.error(err_1);
                     return [2 /*return*/, null];
-                case 3: return [2 /*return*/];
+                case 5: return [2 /*return*/];
             }
         });
     });
 };
+// const getStack = async function (filter, { emailParam }) {
+//     try {
+//         const session = driver.session()
+//         console.log("FILTER", filter)
+//         const result = await session.run(queries.stack(filter), {
+//             emailParam,
+//         })
+//         session.close()
+//         return result.records.map((record: any) => record._fields[0].properties)
+//     } catch (err) {
+//         console.error(err)
+//         return null
+//     }
+// }
 var getPopulars = function (filter, _a) {
     var emailParam = _a.emailParam;
     return __awaiter(this, void 0, void 0, function () {
@@ -97,7 +127,7 @@ var getRandom = function (filter) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
                     session = database_1.default.session();
-                    return [4 /*yield*/, session.run(clothing_queries_1.default.populars(filter))];
+                    return [4 /*yield*/, session.run(clothing_queries_1.default.random(filter))];
                 case 1:
                     result = _a.sent();
                     session.close();
@@ -111,7 +141,7 @@ var getRandom = function (filter) {
         });
     });
 };
-var getHistorial = function (type, filter, _a) {
+var getHistorial = function (type, _a) {
     var emailParam = _a.emailParam, page = _a.page;
     return __awaiter(this, void 0, void 0, function () {
         var query, session, result, err_4;
@@ -136,7 +166,7 @@ var getHistorial = function (type, filter, _a) {
                 case 1:
                     _b.trys.push([1, 3, , 4]);
                     session = database_1.default.session();
-                    return [4 /*yield*/, session.run(query(filter), {
+                    return [4 /*yield*/, session.run(query, {
                             emailParam: emailParam,
                             pageParam: neo4j_driver_1.int(page * 40),
                         })];

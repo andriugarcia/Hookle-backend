@@ -5,43 +5,71 @@ exports.default = [
     {
         method: 'GET',
         path: '/getMe',
-        options: { auth: 'jwt' },
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
         handler: user_service_1.default.getMe,
     },
     {
         method: 'POST',
         path: '/vote',
-        options: { auth: 'jwt' },
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
         handler: user_service_1.default.vote,
     },
     {
         method: 'POST',
         path: '/updateFilters',
-        options: { auth: 'jwt' },
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
         handler: user_service_1.default.updateFilters,
     },
     {
         method: 'POST',
         path: '/updateGenre',
-        options: { auth: 'jwt' },
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
         handler: user_service_1.default.updateGenre,
     },
     {
         method: 'POST',
         path: '/fav',
-        options: { auth: 'jwt' },
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
         handler: user_service_1.default.fav,
     },
     {
         method: 'POST',
         path: '/unfav',
-        options: { auth: 'jwt' },
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
         handler: user_service_1.default.unfav,
     },
     {
         method: 'POST',
         path: '/buy',
-        options: { auth: 'jwt' },
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
         handler: user_service_1.default.buy,
     },
 ];

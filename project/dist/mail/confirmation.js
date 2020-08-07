@@ -36,29 +36,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var database_1 = require("../database");
-var signinQuery = 'MATCH (u:User { email: $emailParam }) RETURN u';
-function signin(email) {
-    return __awaiter(this, void 0, void 0, function () {
-        var session, user, record;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    session = database_1.default.session();
-                    return [4 /*yield*/, session.run(signinQuery, {
-                            emailParam: email,
-                        })];
-                case 1:
-                    user = _a.sent();
-                    session.close();
-                    if (user.records.length == 0) {
-                        return [2 /*return*/, null];
-                    }
-                    record = user.records[0];
-                    return [2 /*return*/, record._fields[0].properties];
-            }
+var sgMail = require("@sendgrid/mail");
+var confirmation_1 = require("./templates/confirmation");
+sgMail.setApiKey('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');
+var sendMail = function (email, token) { return __awaiter(void 0, void 0, void 0, function () {
+    var msg;
+    return __generator(this, function (_a) {
+        msg = {
+            to: email,
+            from: 'noreply@pickalook.co',
+            subject: 'Verifica tu Email',
+            text: 'Haz click aquí para poder confirmar tu email y poder disfrutar de Pick a Look',
+            html: confirmation_1.default(token),
+        };
+        sgMail
+            .send(msg)
+            .then(function (res) {
+            console.log(res);
+        })
+            .catch(function (err) {
+            console.error(err);
         });
+        return [2 /*return*/];
     });
-}
-exports.default = signin;
-//# sourceMappingURL=validate.database.js.map
+}); };
+exports.default = sendMail;
+//# sourceMappingURL=confirmation.js.map

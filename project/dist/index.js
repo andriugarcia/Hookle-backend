@@ -60,31 +60,51 @@ var init = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
-                return [4 /*yield*/, server.register(require('hapi-auth-jwt2'))];
+                _a.trys.push([0, 6, , 7]);
+                return [4 /*yield*/, server.register({
+                        plugin: require('hapi-cors'),
+                        options: {
+                            origins: ['http://localhost:8080', 'https://pickalook.co'],
+                            headers: ['Accept', 'Content-Type', 'Authorization', 'Country'],
+                        },
+                    })];
             case 1:
                 _a.sent();
-                return [4 /*yield*/, server.register(require('@hapi/basic'))];
+                return [4 /*yield*/, server.register(require('@hapi/bell'))];
             case 2:
+                _a.sent();
+                return [4 /*yield*/, server.register(require('hapi-auth-jwt2'))];
+            case 3:
+                _a.sent();
+                return [4 /*yield*/, server.register(require('@hapi/basic'))];
+            case 4:
                 _a.sent();
                 server.auth.strategy('jwt', 'jwt', {
                     key: process.env.SECRET_KEY,
                     validate: validate_1.validateJwt,
                 });
-                server.auth.default('jwt');
+                server.auth.strategy('google', 'bell', {
+                    provider: 'google',
+                    password: 'cookie_encryption_password_secure',
+                    clientId: process.env.GOOGLE_CLIENT_ID,
+                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                    isSecure: false,
+                    location: server.info.uri
+                });
                 server.auth.strategy('simple', 'basic', { validate: validate_1.validateBasic });
+                server.auth.default('simple');
                 server.route(__spreadArrays(user_controller_1.default, clothing_controller_1.default, auth_controller_1.default));
                 return [4 /*yield*/, server.start()];
-            case 3:
+            case 5:
                 _a.sent();
                 console.log("Servidor corriendo en: " + server.info.uri);
-                return [3 /*break*/, 5];
-            case 4:
+                return [3 /*break*/, 7];
+            case 6:
                 error_1 = _a.sent();
                 console.log('Error al iniciar el servidor Hapi');
                 console.error(error_1);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
         }
     });
 }); };

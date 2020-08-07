@@ -61,10 +61,87 @@ var signup = function (_a) {
         });
     });
 };
+var signupWithoutVerification = function (_a) {
+    var emailParam = _a.emailParam, passParam = _a.passParam;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var session, err_2;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    session = database_1.default.session();
+                    return [4 /*yield*/, session.run(user_queries_1.default.signupWithoutVerification, {
+                            emailParam: emailParam,
+                            passParam: passParam,
+                        })];
+                case 1:
+                    _b.sent();
+                    session.close();
+                    return [2 /*return*/, true];
+                case 2:
+                    err_2 = _b.sent();
+                    console.error(err_2);
+                    return [2 /*return*/, false];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
+var verify = function (_a) {
+    var emailParam = _a.emailParam;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var session, err_3;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    session = database_1.default.session();
+                    return [4 /*yield*/, session.run(user_queries_1.default.verifyAccount, {
+                            emailParam: emailParam,
+                        })];
+                case 1:
+                    _b.sent();
+                    session.close();
+                    return [2 /*return*/, true];
+                case 2:
+                    err_3 = _b.sent();
+                    console.error(err_3);
+                    return [2 /*return*/, false];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
+var recover = function (_a) {
+    var emailParam = _a.emailParam, passParam = _a.passParam;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var session, err_4;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    session = database_1.default.session();
+                    return [4 /*yield*/, session.run(user_queries_1.default.recover, {
+                            emailParam: emailParam,
+                            passParam: passParam,
+                        })];
+                case 1:
+                    _b.sent();
+                    session.close();
+                    return [2 /*return*/, true];
+                case 2:
+                    err_4 = _b.sent();
+                    console.error(err_4);
+                    return [2 /*return*/, false];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
 var vote = function (_a) {
     var emailParam = _a.emailParam, clothingParam = _a.clothingParam, ratingParam = _a.ratingParam;
     return __awaiter(void 0, void 0, void 0, function () {
-        var session, err_2;
+        var session, err_5;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -80,8 +157,8 @@ var vote = function (_a) {
                     session.close();
                     return [2 /*return*/, true];
                 case 2:
-                    err_2 = _b.sent();
-                    console.error(err_2);
+                    err_5 = _b.sent();
+                    console.error(err_5);
                     return [2 /*return*/, false];
                 case 3: return [2 /*return*/];
             }
@@ -91,82 +168,13 @@ var vote = function (_a) {
 var updateFilters = function (_a) {
     var emailParam = _a.emailParam, filtersParam = _a.filtersParam;
     return __awaiter(void 0, void 0, void 0, function () {
-        var session, err_3;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 2, , 3]);
-                    session = database_1.default.session();
-                    return [4 /*yield*/, session.run(user_queries_1.default.updateFilters, { emailParam: emailParam, filtersParam: filtersParam })];
-                case 1:
-                    _b.sent();
-                    session.close();
-                    return [2 /*return*/, true];
-                case 2:
-                    err_3 = _b.sent();
-                    console.error(err_3);
-                    return [2 /*return*/, false];
-                case 3: return [2 /*return*/];
-            }
-        });
-    });
-};
-var updateGenre = function (_a) {
-    var emailParam = _a.emailParam, genreParam = _a.genreParam;
-    return __awaiter(void 0, void 0, void 0, function () {
-        var session, err_4;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 2, , 3]);
-                    session = database_1.default.session();
-                    return [4 /*yield*/, session.run(user_queries_1.default.updateGenre, { emailParam: emailParam, genreParam: genreParam })];
-                case 1:
-                    _b.sent();
-                    session.close();
-                    return [2 /*return*/, true];
-                case 2:
-                    err_4 = _b.sent();
-                    console.error(err_4);
-                    return [2 /*return*/, false];
-                case 3: return [2 /*return*/];
-            }
-        });
-    });
-};
-var favorite = function (_a) {
-    var emailParam = _a.emailParam, clothingParam = _a.clothingParam;
-    return __awaiter(void 0, void 0, void 0, function () {
-        var session, err_5;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 2, , 3]);
-                    session = database_1.default.session();
-                    return [4 /*yield*/, session.run(user_queries_1.default.favorite, { emailParam: emailParam, clothingParam: clothingParam })];
-                case 1:
-                    _b.sent();
-                    session.close();
-                    return [2 /*return*/, true];
-                case 2:
-                    err_5 = _b.sent();
-                    console.error(err_5);
-                    return [2 /*return*/, false];
-                case 3: return [2 /*return*/];
-            }
-        });
-    });
-};
-var unfavorite = function (_a) {
-    var emailParam = _a.emailParam, clothingParam = _a.clothingParam;
-    return __awaiter(void 0, void 0, void 0, function () {
         var session, err_6;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     session = database_1.default.session();
-                    return [4 /*yield*/, session.run(user_queries_1.default.unfavorite, { emailParam: emailParam, clothingParam: clothingParam })];
+                    return [4 /*yield*/, session.run(user_queries_1.default.updateFilters, { emailParam: emailParam, filtersParam: filtersParam })];
                 case 1:
                     _b.sent();
                     session.close();
@@ -180,8 +188,8 @@ var unfavorite = function (_a) {
         });
     });
 };
-var buy = function (_a) {
-    var emailParam = _a.emailParam, clothingParam = _a.clothingParam;
+var updateGenre = function (_a) {
+    var emailParam = _a.emailParam, genreParam = _a.genreParam;
     return __awaiter(void 0, void 0, void 0, function () {
         var session, err_7;
         return __generator(this, function (_b) {
@@ -189,7 +197,7 @@ var buy = function (_a) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     session = database_1.default.session();
-                    return [4 /*yield*/, session.run(user_queries_1.default.buy)];
+                    return [4 /*yield*/, session.run(user_queries_1.default.updateGenre, { emailParam: emailParam, genreParam: genreParam })];
                 case 1:
                     _b.sent();
                     session.close();
@@ -203,8 +211,80 @@ var buy = function (_a) {
         });
     });
 };
+var favorite = function (_a) {
+    var emailParam = _a.emailParam, clothingParam = _a.clothingParam;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var session, err_8;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    session = database_1.default.session();
+                    return [4 /*yield*/, session.run(user_queries_1.default.favorite, { emailParam: emailParam, clothingParam: clothingParam })];
+                case 1:
+                    _b.sent();
+                    session.close();
+                    return [2 /*return*/, true];
+                case 2:
+                    err_8 = _b.sent();
+                    console.error(err_8);
+                    return [2 /*return*/, false];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
+var unfavorite = function (_a) {
+    var emailParam = _a.emailParam, clothingParam = _a.clothingParam;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var session, err_9;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    session = database_1.default.session();
+                    return [4 /*yield*/, session.run(user_queries_1.default.unfavorite, { emailParam: emailParam, clothingParam: clothingParam })];
+                case 1:
+                    _b.sent();
+                    session.close();
+                    return [2 /*return*/, true];
+                case 2:
+                    err_9 = _b.sent();
+                    console.error(err_9);
+                    return [2 /*return*/, false];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
+var buy = function (_a) {
+    var emailParam = _a.emailParam, clothingParam = _a.clothingParam;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var session, err_10;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    session = database_1.default.session();
+                    return [4 /*yield*/, session.run(user_queries_1.default.buy, { emailParam: emailParam, clothingParam: clothingParam })];
+                case 1:
+                    _b.sent();
+                    session.close();
+                    return [2 /*return*/, true];
+                case 2:
+                    err_10 = _b.sent();
+                    console.error(err_10);
+                    return [2 /*return*/, false];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
 exports.default = {
     signup: signup,
+    signupWithoutVerification: signupWithoutVerification,
+    verify: verify,
+    recover: recover,
     vote: vote,
     updateFilters: updateFilters,
     updateGenre: updateGenre,

@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateBasic = exports.validateJwt = void 0;
+exports.validateBasic = exports.validateGoogle = exports.validateJwt = void 0;
 var validate_database_1 = require("./validate.database");
 var bcrypt_1 = require("bcrypt");
 exports.validateJwt = function (_a, request, h) {
@@ -46,7 +46,35 @@ exports.validateJwt = function (_a, request, h) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    console.log('JWT Auth');
+                    console.log('JWT Auth', email);
+                    return [4 /*yield*/, validate_database_1.default(email)];
+                case 1:
+                    user = _b.sent();
+                    console.log(user);
+                    if (!user) {
+                        return [2 /*return*/, {
+                                isValid: false,
+                            }];
+                    }
+                    else {
+                        return [2 /*return*/, {
+                                isValid: true,
+                                credentials: user
+                            }];
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    });
+};
+exports.validateGoogle = function (_a, request, h) {
+    var email = _a.email;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var user;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    console.log('Google Auth', email);
                     return [4 /*yield*/, validate_database_1.default(email)];
                 case 1:
                     user = _b.sent();

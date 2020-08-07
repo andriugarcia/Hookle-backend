@@ -35,15 +35,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var filterQuery_js_1 = require("../services/filterQuery.js");
+var filterQuery_1 = require("../services/filterQuery");
 var clothing_database_1 = require("./database/clothing.database");
 var Boom = require("boom");
 var shuffle = function (array) {
@@ -57,32 +50,24 @@ var shuffle = function (array) {
 var getStack = function (_a, h) {
     var auth = _a.auth, payload = _a.payload;
     return __awaiter(this, void 0, void 0, function () {
-        var filter, result, populars, random, nodes, err_1;
+        var filter, result, nodes, err_1;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    _b.trys.push([0, 4, , 5]);
-                    filter = filterQuery_js_1.default(payload.filters, payload.genre);
+                    _b.trys.push([0, 2, , 3]);
+                    filter = filterQuery_1.default(auth.credentials.filters, auth.credentials.genre);
                     return [4 /*yield*/, clothing_database_1.default.getStack(filter, {
                             emailParam: auth.credentials.email,
                         })];
                 case 1:
                     result = _b.sent();
-                    return [4 /*yield*/, clothing_database_1.default.getPopulars(filter, {
-                            emailParam: auth.credentials.email,
-                        })];
-                case 2:
-                    populars = _b.sent();
-                    return [4 /*yield*/, clothing_database_1.default.getRandom(filter)];
-                case 3:
-                    random = _b.sent();
-                    nodes = __spreadArrays(result, populars, random).filter(function (v, i, a) { return a.findIndex(function (t) { return t.code === v.code; }) === i; });
+                    nodes = result.filter(function (v, i, a) { return a.findIndex(function (t) { return t.code === v.code; }) === i; });
                     return [2 /*return*/, shuffle(nodes)];
-                case 4:
+                case 2:
                     err_1 = _b.sent();
                     console.error(err_1);
                     return [2 /*return*/, null];
-                case 5: return [2 /*return*/];
+                case 3: return [2 /*return*/];
             }
         });
     });
@@ -95,7 +80,7 @@ var getPopulars = function (_a, h) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    filter = filterQuery_js_1.default(payload.filters, payload.genre);
+                    filter = filterQuery_1.default(auth.credentials.filters, auth.credentials.genre);
                     return [4 /*yield*/, clothing_database_1.default.getPopulars(filter, {
                             emailParam: auth.credentials.email,
                         })];
@@ -104,6 +89,7 @@ var getPopulars = function (_a, h) {
                     return [2 /*return*/, result];
                 case 2:
                     err_2 = _b.sent();
+                    console.error(err_2);
                     throw Boom.badData('Error al obtener populares');
                 case 3: return [2 /*return*/];
             }
@@ -113,13 +99,12 @@ var getPopulars = function (_a, h) {
 var getHistorial = function (_a, h) {
     var auth = _a.auth, payload = _a.payload, params = _a.params;
     return __awaiter(this, void 0, void 0, function () {
-        var filter, result, err_3;
+        var result, err_3;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    filter = filterQuery_js_1.default(payload.filters, payload.genre);
-                    return [4 /*yield*/, clothing_database_1.default.getHistorial(params.page, filter, {
+                    return [4 /*yield*/, clothing_database_1.default.getHistorial(params.page, {
                             emailParam: auth.credentials.email,
                             page: params.page,
                         })];
@@ -128,6 +113,7 @@ var getHistorial = function (_a, h) {
                     return [2 /*return*/, result];
                 case 2:
                     err_3 = _b.sent();
+                    console.error(err_3);
                     throw Boom.badData('Error al obtener el historial');
                 case 3: return [2 /*return*/];
             }
@@ -151,6 +137,7 @@ var getFavorites = function (_a, h) {
                     return [2 /*return*/, result];
                 case 2:
                     err_4 = _b.sent();
+                    console.error(err_4);
                     throw Boom.badData('Error al obtener los favoritos');
                 case 3: return [2 /*return*/];
             }
@@ -174,6 +161,7 @@ var getBought = function (_a, h) {
                     return [2 /*return*/, result];
                 case 2:
                     err_5 = _b.sent();
+                    console.error(err_5);
                     throw Boom.badData('Error al obtener los comprados');
                 case 3: return [2 /*return*/];
             }
