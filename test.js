@@ -1,51 +1,124 @@
+const server = require('./dist/index.js')
+let base64 = require('base-64')
 
-var neo4j = require('neo4j-driver');
-var axios = require('axios');
-var cheerio = require('cheerio');
+let token = ''
 
-var driver = neo4j.driver('bolt://18.203.12.204', neo4j.auth.basic('neo4j', 'A4sJ2eG4aM4s'));
+beforeAll((done) => {
+    server.events.on('start', () => {
+        done()
+    })
+})
 
+afterAll((done) => {
+    server.events.on('stop', () => {
+        done()
+    })
+    server.stop()
+})
 
-async function init() {
-  let session = driver.session();
-  let result = await session.run(`MATCH (c: Clothing) RETURN c`)
-  let nodes = result.records.map(record => (record._fields[0].properties))
-  session.close()
-  
-  
-  console.log("Nodos totales: ", nodes.length);
-  for(let i = 108; i < nodes.length; i+=1) {
-    console.log(i);
-    const url = `http://www.amazon.es/dp/${nodes[i].code}`;
-    
-    try {
-      const {
-        data
-      } = await axios.get(url);
-  
-      const $ = cheerio.load(data);
-
-      let featureDetails = [];
-      $('#feature-bullets>ul>li>span').each((i, el) => {
-        featureDetails.push($(el).text().replace(/[\n\t]/g, '').trim());
-      })
-      let description = featureDetails.join('\n')
-      
-      let session2 = driver.session();
-      session2.run(`MATCH (n:Clothing { code: $codeParam })
-                    SET n.description = $descriptionParam`, {
-                      codeParam: nodes[i].code,
-                      descriptionParam: description
-                    })
-      session2.close()
-
+test('Falla al iniciar sesion', async function () {
+    const options = {
+        method: 'POST',
+        url: '/signin',
     }
-    catch (err) {
-      console.log("FAIL:", nodes[i].code, err);
+    const data = await server.inject(options)
+    expect(data.statusCode).toBe(401)
+})
+
+test('Contraseña Incorrecta', async function () {
+    const options = {
+        method: 'POST',
+        url: '/signin',
+        headers: {
+            Authorization:
+                'Basic ' + base64.encode('gvdrews@gmail.com:incorrecto'),
+        },
     }
+    const data = await server.inject(options)
+    expect(data.statusCode).toBe(401)
+})
 
-  }
+it('Deberia iniciar sesión correctamente', async function () {
+    const options = {
+        method: 'POST',
+        url: '/signin',
+        headers: {
+            Authorization: 'Basic ' + base64.encode('gvdrews@gmail.com:1234'),
+        },
+    }
+    const data = await server.inject(options)
+    expect(data.statusCode).toBe(200)
+    expect(data.result.accessToken).toBeDefined()
+    token = data.result.accessToken
+})
 
-}
+it('Deberia obtener correctamente el usuario', async function () {
+    const options = {
+        method: 'GET',
+        url: '/getMe',
+        headers: {
+            Authorization: 'Bearer ' + token,
+        },
+    }
+    const data = await server.inject(options)
+    expect(data.statusCode).toBe(200)
+    expect(data.result.email).toBe('gvdrews@gmail.com')
+})
 
-init();
+it('Deberia obtener correctamente el stack', async function () {
+    const options = {
+        method: 'GET',
+        url: '/stack',
+        headers: {
+            Authorization: 'Bearer ' + token,
+        },
+    }
+    const data = await server.inject(options)
+    expect(data.statusCode).toBe(200)
+    expect(data.result.length).toBeGreaterThan(0)
+})
+
+it('Deberia actualizar los filtros', async function () {
+    const options = {
+        method: 'POST',
+        url: '/updateFilters',
+        headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        body: {
+            filters: ['hat'],
+        },
+    }
+    const data = await server.inject(options)
+    expect(data.statusCode).toBe(200)
+})
+
+it('Deberia actualizar el género', async function () {
+    const options = {
+        method: 'POST',
+        url: '/updateGenre',
+        headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        body: {
+            genre: 'women',
+        },
+    }
+    const data = await server.inject(options)
+    expect(data.statusCode).toBe(200)
+})
+
+it('Deberia tener los filtros actualizados', async function () {
+    const options = {
+        method: 'GET',
+        url: '/getMe',
+        headers: {
+            Authorization: 'Bearer ' + token,
+        },
+    }
+    const data = await server.inject(options)
+    console.log('FILTERS', data.result.filters)
+    expect(data.statusCode).toBe(200)
+    expect(data.result.filters).toEqual(['hat'])
+    expect(data.result.genre).toBe('women')
+})
