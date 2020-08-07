@@ -51,7 +51,7 @@ var auth_controller_1 = require("./auth/auth.controller");
 var dotenv = require("dotenv");
 dotenv.config({ path: __dirname + '/.env' });
 var server = Hapi.server({
-    port: process.env.PORT,
+    port: process.env.PORT || 3010,
     host: 'localhost',
     app: {},
 });
