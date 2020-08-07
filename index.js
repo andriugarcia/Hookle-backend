@@ -1,7 +1,7 @@
 'use strict'
 
-const express=require('express')
-const app=express()
+const express = require('express')
+const app = express()
 // const user=require('./controllers/user')
 var cors = require('cors');
 var path = require('path');
@@ -14,9 +14,9 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const bcrypt = require('bcrypt');
 
-const filterQuery=require('./services/filterQuery')
-const service=require('./services')
-const queries=require('./queries');
+const filterQuery = require('./services/filterQuery')
+const service = require('./services')
+const queries = require('./queries');
 
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -26,8 +26,10 @@ app.set('view engine', 'ejs');
 
 app.use(cors());
 app.use(logger('dev'));
-app.use( bodyParser.json() ); 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // var driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', 'A4sJ2eG4aM4s'));
@@ -43,19 +45,25 @@ Object.defineProperty(Array.prototype, 'shuffle', {
   }
 });
 
-app.get('/stack', async (req,res) => {
+app.get('/stack', async (req, res) => {
   try {
     let payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
     let session = driver.session();
-    let user = await session.run(queries.signin, { emailParam: payload })
+    let user = await session.run(queries.signin, {
+      emailParam: payload
+    })
     const filter = filterQuery(user.records[0]._fields[0].properties.filters, user.records[0]._fields[0].properties.genre)
     console.log(filter)
-    let result = await session.run(queries.stackRating(filter), { emailParam: payload })
-    let populars = await session.run(queries.popularsRating(filter), { emailParam: payload })
+    let result = await session.run(queries.stackRating(filter), {
+      emailParam: payload
+    })
+    let populars = await session.run(queries.popularsRating(filter), {
+      emailParam: payload
+    })
     let random = await session.run(queries.random(filter))
     session.close()
     console.log(result.records)
-  
+
     let nodes = [
       ...result.records.map(record => (record._fields[0].properties)),
       ...populars.records.map(record => (record._fields[0].properties)),
@@ -68,7 +76,7 @@ app.get('/stack', async (req,res) => {
   }
 });
 
-app.get('/', async (req,res) => {
+app.get('/', async (req, res) => {
   const msg = {
     to: 'test@example.com',
     from: 'test@example.com',
@@ -78,24 +86,27 @@ app.get('/', async (req,res) => {
   };
   try {
     await sgMail.send(msg);
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err)
   }
   res.sendStatus(200)
 });
 
-app.get('/populars', async (req,res) => {
+app.get('/populars', async (req, res) => {
   try {
     let payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
     let session = driver.session();
 
-    let user = await session.run(queries.signin, { emailParam: payload })
+    let user = await session.run(queries.signin, {
+      emailParam: payload
+    })
     const filter = filterQuery(user.records[0]._fields[0].properties.filters, user.records[0]._fields[0].properties.genre)
 
-    let result = await session.run(queries.popularsRating(filter), { emailParam: payload })
+    let result = await session.run(queries.popularsRating(filter), {
+      emailParam: payload
+    })
     session.close()
-  
+
     let nodes = result.records.map(record => (record._fields[0].properties))
     res.status(201).send(nodes)
   } catch (err) {
@@ -112,16 +123,16 @@ app.get('/populars', async (req,res) => {
 //     let session1 = driver.session();
 //     let result = await session1.run(queries.stack, { emailParam: payload })
 //     session1.close()
-    
-    
+
+
 //     let session2 = driver.session();
 //     let random = await session2.run(queries.random) // Prendas todavía sin descubrir
 //     session2.close()
-    
+
 //     let nodes = result.records.map(record => (record._fields[0].properties))
 //     let randomnodes = random.records.map(record => (record._fields[0].properties))
 //     const length = nodes.length;
-    
+
 //     if (length < 20) {
 //       const limit = 20 - length
 //       let session3 = driver.session();
@@ -153,7 +164,7 @@ app.get('/populars', async (req,res) => {
 
 
 app.post('/signup', async (req, res) => {
-  const user={
+  const user = {
     email: req.body.email,
     password: req.body.password
   }
@@ -167,7 +178,7 @@ app.post('/signup', async (req, res) => {
     passParam: hash
   })
   session.close()
-      
+
   res.status(200).send({
     message: 'User created',
     token: service.createToken(user),
@@ -176,7 +187,9 @@ app.post('/signup', async (req, res) => {
 
 app.post('/signin', async (req, res) => {
   let session = driver.session();
-  const result = await session.run(queries.signin, { emailParam: req.body.email })
+  const result = await session.run(queries.signin, {
+    emailParam: req.body.email
+  })
   session.close()
 
   if (result.records.length == 0) {
@@ -190,11 +203,10 @@ app.post('/signin', async (req, res) => {
 
   if (passRes) {
     res.status(201).send({
-        message:'Login correcto',
-        token: service.createToken(user)
+      message: 'Login correcto',
+      token: service.createToken(user)
     })
-  }
-  else {
+  } else {
     res.status(400).send({
       message: 'La contraseña no es correcta'
     })
@@ -209,16 +221,28 @@ app.get('/historial/:type/:page', async (req, res) => {
     let result;
     switch (req.params.type) {
       case 'historicalAsc':
-        result = await session.run(queries.historicalAsc, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40)  })
+        result = await session.run(queries.historicalAsc, {
+          emailParam: payload,
+          pageParam: neo4j.int(req.params.page * 40)
+        })
         break;
       case 'ratingAsc':
-        result = await session.run(queries.ratingAsc, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40)  })
+        result = await session.run(queries.ratingAsc, {
+          emailParam: payload,
+          pageParam: neo4j.int(req.params.page * 40)
+        })
         break;
       case 'ratingDesc':
-        result = await session.run(queries.ratingDesc, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40)  })
+        result = await session.run(queries.ratingDesc, {
+          emailParam: payload,
+          pageParam: neo4j.int(req.params.page * 40)
+        })
         break;
       default:
-        result = await session.run(queries.historicalDesc, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40)  })
+        result = await session.run(queries.historicalDesc, {
+          emailParam: payload,
+          pageParam: neo4j.int(req.params.page * 40)
+        })
         break;
     }
     session.close()
@@ -226,7 +250,7 @@ app.get('/historial/:type/:page', async (req, res) => {
     res.send(nodes);
 
 
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -237,11 +261,13 @@ app.get('/likes', async (req, res) => {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
     console.log(payload)
     let session = driver.session();
-    const result = await session.run(queries.likesRating, { emailParam: payload })
+    const result = await session.run(queries.likesRating, {
+      emailParam: payload
+    })
     session.close()
     let nodes = result.records.map(record => (record._fields[0].properties))
     res.send(nodes);
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -250,14 +276,15 @@ app.get('/likes', async (req, res) => {
 app.get('/dislikes', async (req, res) => {
   try {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
-      console.log(payload)
-      let session = driver.session();
-      const result = await session.run(queries.dislikesRating, { emailParam: payload })
-      session.close()
-      let nodes = result.records.map(record => (record._fields[0].properties))
-      res.send(nodes);            
-  }
-  catch(err) {
+    console.log(payload)
+    let session = driver.session();
+    const result = await session.run(queries.dislikesRating, {
+      emailParam: payload
+    })
+    session.close()
+    let nodes = result.records.map(record => (record._fields[0].properties))
+    res.send(nodes);
+  } catch (err) {
     console.error(err);
     res.send(401, err);
   }
@@ -266,14 +293,17 @@ app.get('/dislikes', async (req, res) => {
 app.get('/favorites/:page', async (req, res) => {
   try {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
-      console.log(payload)
-      let session = driver.session();
-      const result = await session.run(queries.favorites, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40) })
-      session.close()
-      let nodes = result.records.map(record => (record._fields[0].properties))
-      res.send(nodes);
-            
-  } catch(err) {
+    console.log(payload)
+    let session = driver.session();
+    const result = await session.run(queries.favorites, {
+      emailParam: payload,
+      pageParam: neo4j.int(req.params.page * 40)
+    })
+    session.close()
+    let nodes = result.records.map(record => (record._fields[0].properties))
+    res.send(nodes);
+
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -284,11 +314,14 @@ app.get('/bought/:page', async (req, res) => {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
     console.log(payload)
     let session = driver.session();
-    const result = await session.run(queries.bought, { emailParam: payload, pageParam: neo4j.int(req.params.page * 40) })      
+    const result = await session.run(queries.bought, {
+      emailParam: payload,
+      pageParam: neo4j.int(req.params.page * 40)
+    })
     session.close()
     let nodes = result.records.map(record => (record._fields[0].properties))
     res.send(nodes);
-  } catch(err){
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -308,8 +341,8 @@ app.get('/getMe', async (req, res) => {
     }
     session.close()
     res.send(result.records[0]._fields[0].properties);
-          
-  } catch(err) {
+
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -324,12 +357,12 @@ app.post('/vote', async (req, res) => {
       emailParam: payload,
       clothingParam: req.body.clothing,
       ratingParam: req.body.rating
-    })      
+    })
     session.close()
     console.log("Relacionado exitosamente")
     res.sendStatus(200);
-          
-  } catch(err) {
+
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -343,12 +376,12 @@ app.post('/like', async (req, res) => {
     await session.run(queries.like, {
       emailParam: payload,
       clothingParam: req.body.clothing
-    })      
+    })
     session.close()
     console.log("Relacionado exitosamente")
     res.sendStatus(200);
-          
-  } catch(err) {
+
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -366,7 +399,7 @@ app.post('/updateFilters', async (req, res) => {
     session.close()
     console.log("Actualizado exitosamente")
     res.sendStatus(200);
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -384,7 +417,7 @@ app.post('/updateGenre', async (req, res) => {
     session.close()
     console.log("Actualizado exitosamente")
     res.sendStatus(200);
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -403,7 +436,7 @@ app.post('/dislike', async (req, res) => {
     session.close()
     console.log("Relacionado exitosamente")
     res.sendStatus(200);
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -412,17 +445,17 @@ app.post('/dislike', async (req, res) => {
 app.post('/fav', async (req, res) => {
   try {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
-      console.log(payload)
-      let session = driver.session();
-      await session.run(queries.favorite, {
-        emailParam: payload,
-        clothingParam: req.body.clothing
-      })
-      session.close()
-      console.log("Relacionado exitosamente")
-      res.sendStatus(200);
+    console.log(payload)
+    let session = driver.session();
+    await session.run(queries.favorite, {
+      emailParam: payload,
+      clothingParam: req.body.clothing
+    })
+    session.close()
+    console.log("Relacionado exitosamente")
+    res.sendStatus(200);
 
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -431,17 +464,17 @@ app.post('/fav', async (req, res) => {
 app.post('/unfav', async (req, res) => {
   try {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
-      console.log(payload)
-      let session = driver.session();
-      await session.run(queries.unfavorite, {
-        emailParam: payload,
-        clothingParam: req.body.clothing
-      })
-      session.close()
-      console.log("Relacionado exitosamente")
-      res.sendStatus(200);
+    console.log(payload)
+    let session = driver.session();
+    await session.run(queries.unfavorite, {
+      emailParam: payload,
+      clothingParam: req.body.clothing
+    })
+    session.close()
+    console.log("Relacionado exitosamente")
+    res.sendStatus(200);
 
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -450,16 +483,16 @@ app.post('/unfav', async (req, res) => {
 app.post('/buy', async (req, res) => {
   try {
     const payload = await service.decodeToken(req.headers.authorization.split(" ")[1])
-      console.log(payload)
-      let session = driver.session();
-      await session.run(queries.buy, {
-        emailParam: payload,
-        clothingParam: req.body.clothing
-      })      
-      session.close()
-      console.log("Relacionado exitosamente")
-      res.sendStatus(200);
-  } catch(err) {
+    console.log(payload)
+    let session = driver.session();
+    await session.run(queries.buy, {
+      emailParam: payload,
+      clothingParam: req.body.clothing
+    })
+    session.close()
+    console.log("Relacionado exitosamente")
+    res.sendStatus(200);
+  } catch (err) {
     console.error(err);
     res.send(401);
   }
@@ -467,32 +500,32 @@ app.post('/buy', async (req, res) => {
 
 app.get('/product/:code', async (req, res) => {
   // try {
-    const url = `http://www.amazon.es/dp/${req.params.code}`;
+  const url = `http://www.amazon.es/dp/${req.params.code}`;
 
-    const {
-      data
-    } = await axios.get(url);
+  const {
+    data
+  } = await axios.get(url);
 
-    // Price
-    const $ = cheerio.load(data);
-    const price = $('#priceblock_ourprice').get([0]);
+  // Price
+  const $ = cheerio.load(data);
+  const price = $('#priceblock_ourprice').get([0]);
 
-    // Description
-    let featureDetails = [];
-    $('#feature-bullets>ul>li>span').each((i, el) => {
-      featureDetails.push($(el).text().replace(/[\n\t]/g, '').trim());
-    })
-    let description = featureDetails.join('\n')
+  // Description
+  let featureDetails = [];
+  $('#feature-bullets>ul>li>span').each((i, el) => {
+    featureDetails.push($(el).text().replace(/[\n\t]/g, '').trim());
+  })
+  let description = featureDetails.join('\n')
 
-    // Image
-    const images = $('#landingImage ').attr('data-old-hires');
-    let details = {
-      price: price.children[0].data,
-      pictures: [images],
-      description
-    }
-    console.log(details)
-    res.send(details)
+  // Image
+  const images = $('#landingImage ').attr('data-old-hires');
+  let details = {
+    price: price.children[0].data,
+    pictures: [images],
+    description
+  }
+  console.log(details)
+  res.send(details)
 
   // } catch (err) {
   //   console.error(err);
