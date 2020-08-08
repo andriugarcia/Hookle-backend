@@ -28,6 +28,7 @@ const random = (filter) => `MATCH   (c:Clothing)
                 ORDER BY number
                 LIMIT 5`
 
+const getFavProduct = `MATCH (u:User {email: $emailParam})-[:FAVORITE]->(c:Clothing {code: $clothingParam}) RETURN c`
 const historicalAsc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
                     RETURN c ORDER BY r ASC  SKIP $pageParam LIMIT 40`
 const historicalDesc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
@@ -45,6 +46,7 @@ export default {
     stack,
     populars,
     random,
+    getFavProduct,
     historicalAsc,
     historicalDesc,
     ratingAsc,

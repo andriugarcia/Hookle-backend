@@ -108,6 +108,20 @@ const getFavorites = async function ({ emailParam, page }) {
         return null
     }
 }
+const getFavProduct = async function ({ emailParam, clothing }) {
+    try {
+        const session = driver.session()
+        const result = await session.run(queries.getFavProduct, {
+            emailParam,
+            clothingParam: clothing
+        })
+        session.close()
+        return result.records.map((record: any) => record._fields[0].properties)
+    } catch (err) {
+        console.error(err)
+        return null
+    }
+}
 const getBought = async function ({ emailParam, page }) {
     try {
         const session = driver.session()
@@ -126,6 +140,7 @@ const getBought = async function ({ emailParam, page }) {
 export default {
     getStack,
     getPopulars,
+    getFavProduct,
     getHistorial,
     getFavorites,
     getBought,

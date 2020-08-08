@@ -42,4 +42,14 @@ export default [
         },
         handler: clothingService.getStack,
     },
+    {
+        method: 'GET',
+        path: '/fav/{clothing}',
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
+        handler: clothingService.getFavProduct,
+    },
 ] as Array<ServerRoute>

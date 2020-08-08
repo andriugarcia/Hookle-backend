@@ -70,6 +70,18 @@ const getFavorites = async function ({ auth, params }: any, h) {
         throw Boom.badData('Error al obtener los favoritos')
     }
 }
+const getFavProduct = async function ({ auth, params }: any, h) {
+    try {
+        let result = await db.getFavProduct({
+            emailParam: auth.credentials.email,
+            clothing: params.clothing,
+        })
+        return result.length > 0
+    } catch (err) {
+        console.error(err)
+        throw Boom.badData('Error al obtener el producto')
+    }
+}
 const getBought = async function ({ auth, payload, params }: any, h) {
     try {
         let result = await db.getBought({
@@ -83,4 +95,4 @@ const getBought = async function ({ auth, payload, params }: any, h) {
     }
 }
 
-export default { getStack, getPopulars, getHistorial, getFavorites, getBought }
+export default { getStack, getPopulars, getFavProduct, getHistorial, getFavorites, getBought }
