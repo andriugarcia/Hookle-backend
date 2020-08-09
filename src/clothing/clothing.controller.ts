@@ -4,7 +4,7 @@ import { ServerRoute } from '@hapi/hapi'
 export default [
     {
         method: 'GET',
-        path: '/historial/{type}/{page}',
+        path: '/historial/{order}/{page}',
         options: {
             auth: {
                 strategies: ['jwt', 'google'],

@@ -79,6 +79,7 @@ const vote = async function ({ auth, payload }: any) {
     }
 }
 const updateFilters = async function ({ auth, payload }: any, h) {
+    if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
     if (
         await db.updateFilters({
             emailParam: auth.credentials.email,
@@ -91,6 +92,7 @@ const updateFilters = async function ({ auth, payload }: any, h) {
     }
 }
 const updateGenre = async function ({ auth, payload }: any, h) {
+    if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
     if (
         await db.updateGenre({
             emailParam: auth.credentials.email,
@@ -103,6 +105,7 @@ const updateGenre = async function ({ auth, payload }: any, h) {
     }
 }
 const fav = async function ({ auth, payload }: any, h) {
+    if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
     if (
         await db.favorite({
             emailParam: auth.credentials.email,
@@ -115,6 +118,7 @@ const fav = async function ({ auth, payload }: any, h) {
     }
 }
 const unfav = async function ({ auth, payload }: any, h) {
+    if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
     if (
         await db.unfavorite({
             emailParam: auth.credentials.email,
@@ -127,6 +131,7 @@ const unfav = async function ({ auth, payload }: any, h) {
     }
 }
 const buy = async function ({ auth, payload }: any, h) {
+    if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
     if (
         await db.buy({
             emailParam: auth.credentials.email,

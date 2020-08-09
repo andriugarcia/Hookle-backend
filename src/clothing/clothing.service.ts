@@ -12,6 +12,7 @@ const shuffle = (array) => {
 
 const getStack = async function ({ auth, payload }: any, h) {
     try {
+        if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
         const filter = filterQuery(
             auth.credentials.filters,
             auth.credentials.genre
@@ -31,7 +32,9 @@ const getStack = async function ({ auth, payload }: any, h) {
     }
 }
 const getPopulars = async function ({ auth, payload }: any, h) {
+    if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
     try {
+        if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
         const filter = filterQuery(
             auth.credentials.filters,
             auth.credentials.genre
@@ -47,7 +50,9 @@ const getPopulars = async function ({ auth, payload }: any, h) {
 }
 const getHistorial = async function ({ auth, payload, params }: any, h) {
     try {
-        let result = await db.getHistorial(params.page, {
+        if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
+        console.log(params.order)
+        let result = await db.getHistorial(params.order, {
             emailParam: auth.credentials.email,
             page: params.page,
         })
@@ -60,6 +65,7 @@ const getHistorial = async function ({ auth, payload, params }: any, h) {
 }
 const getFavorites = async function ({ auth, params }: any, h) {
     try {
+        if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
         let result = await db.getFavorites({
             emailParam: auth.credentials.email,
             page: params.page,
@@ -72,6 +78,7 @@ const getFavorites = async function ({ auth, params }: any, h) {
 }
 const getFavProduct = async function ({ auth, params }: any, h) {
     try {
+        if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
         let result = await db.getFavProduct({
             emailParam: auth.credentials.email,
             clothing: params.clothing,
@@ -84,6 +91,7 @@ const getFavProduct = async function ({ auth, params }: any, h) {
 }
 const getBought = async function ({ auth, payload, params }: any, h) {
     try {
+        if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
         let result = await db.getBought({
             emailParam: auth.credentials.email,
             page: params.page,

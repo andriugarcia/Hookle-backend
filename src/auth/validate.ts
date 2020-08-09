@@ -10,16 +10,19 @@ export const validateJwt = async (
     console.log('JWT Auth', email)
     const user = await signin(email)
     console.log(user)
-    if (!user) {
-        return {
-            isValid: false,
-        }
-    } else {
+
+    if (user) {
         return {
             isValid: true,
             credentials: user
         }
     }
+    else {
+        return {
+            isValid: false,
+        }
+    }
+
 }
 
 export const validateGoogle = async (

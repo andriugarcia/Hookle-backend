@@ -15,18 +15,20 @@ const stack = (
                                 ORDER BY score DESC LIMIT 25`
 
 const populars = (filter) => `MATCH (a:User)-[r:LIKES]->(c:Clothing)
-                        WHERE NOT (:User {email: $emailParam})-[]->(c) ${filter}
-                        WITH c, COLLECT(r.rating) as likes
-                        UNWIND likes AS likesret
-                        RETURN c, AVG(likesret) AS len
-                        ORDER BY len DESC LIMIT 10`
+                            WHERE NOT (:User {email: $emailParam})-[]->(c) ${filter}
+                            WITH c, COUNT(r) as length, COLLECT(r.rating) as likes
+                            WHERE length >= 3
+                            UNWIND likes AS likesret
+                            RETURN c, length, AVG(likesret) AS len
+                            ORDER BY len DESC LIMIT 10`
 
-const random = (filter) => `MATCH   (c:Clothing)
-                WHERE NOT (c)<-[]-() ${filter}
-                WITH c, rand() AS number
-                RETURN c
-                ORDER BY number
-                LIMIT 5`
+const random = (filter) => `MATCH ()-[r:LIKES]->(c:Clothing)
+                            WITH c, count(r) as rel_cnt
+                            WHERE rel_cnt <= 5 ${filter}
+                            WITH c, rand() AS number
+                            RETURN c
+                            ORDER BY number
+                            LIMIT 5`
 
 const getFavProduct = `MATCH (u:User {email: $emailParam})-[:FAVORITE]->(c:Clothing {code: $clothingParam}) RETURN c`
 const historicalAsc = `MATCH (u:User {email: $emailParam})-[r:LIKES]->(c:Clothing)
