@@ -3,10 +3,10 @@ const vote = `MATCH (u: User{ email: $emailParam })
               CREATE (u)-[r:LIKES {rating: $ratingParam}]->(c)`
 
 const signup =
-    'CREATE(u:User {email: $emailParam, password: $passParam, genre: "all", filters: [], confirmed: true}) RETURN u.email'
+        'CREATE(u:User {email: $emailParam, password: $passParam, genre: "all", filters: [], confirmed: true}) RETURN u'
 
 const signupWithoutVerification =
-    'CREATE(u:User {email: $emailParam, password: $passParam, genre: "all", filters: [], confirmed: false}) RETURN u.email'
+        'CREATE(u:User {email: $emailParam, password: $passParam, genre: "all", filters: [], confirmed: false}) RETURN u'
 
 const verifyAccount = `MATCH (u: User{ email: $emailParam })
         SET u.confirmed = true`
@@ -34,14 +34,14 @@ const buy = `MATCH (u: User{ email: $emailParam })
               CREATE (u)-[r:BUY]->(c)`
 
 export default {
-    signup,
-    signupWithoutVerification,
-    verifyAccount,
-    recover,
-    vote,
-    updateFilters,
-    updateGenre,
-    favorite,
-    unfavorite,
-    buy,
+        signup,
+        signupWithoutVerification,
+        verifyAccount,
+        recover,
+        vote,
+        updateFilters,
+        updateGenre,
+        favorite,
+        unfavorite,
+        buy,
 }

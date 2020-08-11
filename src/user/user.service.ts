@@ -56,7 +56,7 @@ const sendRecoverPassword = async function ({ payload }: any, h) {
     return 'OK'
 }
 const getMe = async function ({ auth }: any, h) {
-
+    console.log("GETME", auth.credentials.email)
     const { email, filters, genre, confirmed } = await signin(auth.credentials.email)
     return {
         email,

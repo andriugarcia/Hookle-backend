@@ -12,7 +12,7 @@ const shuffle = (array) => {
 
 const getStack = async function ({ auth, payload }: any, h) {
     try {
-        if (!auth.credentials.confirmed) throw Boom.forbidden('El usuario no está verificado')
+        if (!auth.credentials.confirmed) { throw Boom.forbidden('El usuario no está verificado') }
         const filter = filterQuery(
             auth.credentials.filters,
             auth.credentials.genre

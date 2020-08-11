@@ -4,27 +4,27 @@ import queries from './user.queries'
 const signup = async ({ emailParam, passParam }) => {
     try {
         const session = driver.session()
-        await session.run(queries.signup, { emailParam, passParam })
+        const user = await session.run(queries.signup, { emailParam, passParam })
         session.close()
-        return true
+        return user
     } catch (err) {
         console.error(err)
-        return false
+        return null
     }
 }
 
 const signupWithoutVerification = async ({ emailParam, passParam }) => {
     try {
         const session = driver.session()
-        await session.run(queries.signupWithoutVerification, {
+        const user = await session.run(queries.signupWithoutVerification, {
             emailParam,
             passParam,
         })
         session.close()
-        return true
+        return user
     } catch (err) {
         console.error(err)
-        return false
+        return null
     }
 }
 

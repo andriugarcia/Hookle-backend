@@ -5,6 +5,7 @@ import UserController from './user/user.controller'
 import ClothingController from './clothing/clothing.controller'
 import AuthController from './auth/auth.controller'
 import * as dotenv from 'dotenv'
+import * as Boom from 'boom'
 
 dotenv.config({ path: __dirname + '/.env' })
 
@@ -25,20 +26,24 @@ const init = async () => {
         await server.register(require('@hapi/bell'))
         await server.register(require('hapi-auth-jwt2'))
         await server.register(require('@hapi/basic'))
+        await server.register(require('./auth/strategies/google'))
 
         server.auth.strategy('jwt', 'jwt', {
             key: process.env.SECRET_KEY,
-            validate: validateJwt,
+            validate: validateJwt
         })
 
-        server.auth.strategy('google', 'bell', {
-            provider: 'google',
-            password: 'cookie_encryption_password_secure',
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            isSecure: false,
-            location: server.info.uri
-        })
+        server.auth.strategy('google', 'google', {});
+
+
+        // server.auth.strategy('google', 'bell', {
+        //     provider: 'google',
+        //     password: 'cookie_encryption_password_secure',
+        //     clientId: process.env.GOOGLE_CLIENT_ID,
+        //     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        //     isSecure: false,
+        //     location: server.info.uri
+        // })
 
         server.auth.strategy('simple', 'basic', { validate: validateBasic })
         server.auth.default('simple')

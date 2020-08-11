@@ -209,8 +209,8 @@ var getFavorites = function (_a) {
         });
     });
 };
-var getBought = function (_a) {
-    var emailParam = _a.emailParam, page = _a.page;
+var getFavProduct = function (_a) {
+    var emailParam = _a.emailParam, clothing = _a.clothing;
     return __awaiter(this, void 0, void 0, function () {
         var session, result, err_6;
         return __generator(this, function (_b) {
@@ -218,9 +218,9 @@ var getBought = function (_a) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
                     session = database_1.default.session();
-                    return [4 /*yield*/, session.run(clothing_queries_1.default.bought, {
+                    return [4 /*yield*/, session.run(clothing_queries_1.default.getFavProduct, {
                             emailParam: emailParam,
-                            pageParam: neo4j_driver_1.int(page * 40),
+                            clothingParam: clothing
                         })];
                 case 1:
                     result = _b.sent();
@@ -235,9 +235,36 @@ var getBought = function (_a) {
         });
     });
 };
+var getBought = function (_a) {
+    var emailParam = _a.emailParam, page = _a.page;
+    return __awaiter(this, void 0, void 0, function () {
+        var session, result, err_7;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    session = database_1.default.session();
+                    return [4 /*yield*/, session.run(clothing_queries_1.default.bought, {
+                            emailParam: emailParam,
+                            pageParam: neo4j_driver_1.int(page * 40),
+                        })];
+                case 1:
+                    result = _b.sent();
+                    session.close();
+                    return [2 /*return*/, result.records.map(function (record) { return record._fields[0].properties; })];
+                case 2:
+                    err_7 = _b.sent();
+                    console.error(err_7);
+                    return [2 /*return*/, null];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
 exports.default = {
     getStack: getStack,
     getPopulars: getPopulars,
+    getFavProduct: getFavProduct,
     getHistorial: getHistorial,
     getFavorites: getFavorites,
     getBought: getBought,

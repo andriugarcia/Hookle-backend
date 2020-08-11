@@ -7,7 +7,7 @@ export default [
         path: '/historial/{order}/{page}',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: clothingService.getHistorial,
@@ -17,7 +17,7 @@ export default [
         path: '/favorites/{page}',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: clothingService.getFavorites,
@@ -27,7 +27,7 @@ export default [
         path: '/bought/{page}',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: clothingService.getBought,
@@ -37,7 +37,7 @@ export default [
         path: '/stack',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: clothingService.getStack,
@@ -47,7 +47,7 @@ export default [
         path: '/fav/{clothing}',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: clothingService.getFavProduct,

@@ -4,7 +4,7 @@ var clothing_service_1 = require("./clothing.service");
 exports.default = [
     {
         method: 'GET',
-        path: '/historial/{type}/{page}',
+        path: '/historial/{order}/{page}',
         options: {
             auth: {
                 strategies: ['jwt', 'google'],
@@ -41,6 +41,16 @@ exports.default = [
             }
         },
         handler: clothing_service_1.default.getStack,
+    },
+    {
+        method: 'GET',
+        path: '/fav/{clothing}',
+        options: {
+            auth: {
+                strategies: ['jwt', 'google'],
+            }
+        },
+        handler: clothing_service_1.default.getFavProduct,
     },
 ];
 //# sourceMappingURL=clothing.controller.js.map

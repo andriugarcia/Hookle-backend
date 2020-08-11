@@ -197,10 +197,13 @@ var updateFilters = function (_a, h) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, user_database_1.default.updateFilters({
-                        emailParam: auth.credentials.email,
-                        filtersParam: payload.filters,
-                    })];
+                case 0:
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
+                    return [4 /*yield*/, user_database_1.default.updateFilters({
+                            emailParam: auth.credentials.email,
+                            filtersParam: payload.filters,
+                        })];
                 case 1:
                     if (_b.sent()) {
                         return [2 /*return*/, 'OK'];
@@ -218,10 +221,13 @@ var updateGenre = function (_a, h) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, user_database_1.default.updateGenre({
-                        emailParam: auth.credentials.email,
-                        genreParam: payload.genre,
-                    })];
+                case 0:
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
+                    return [4 /*yield*/, user_database_1.default.updateGenre({
+                            emailParam: auth.credentials.email,
+                            genreParam: payload.genre,
+                        })];
                 case 1:
                     if (_b.sent()) {
                         return [2 /*return*/, 'OK'];
@@ -239,10 +245,13 @@ var fav = function (_a, h) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, user_database_1.default.favorite({
-                        emailParam: auth.credentials.email,
-                        clothingParam: payload.clothing,
-                    })];
+                case 0:
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
+                    return [4 /*yield*/, user_database_1.default.favorite({
+                            emailParam: auth.credentials.email,
+                            clothingParam: payload.clothing,
+                        })];
                 case 1:
                     if (_b.sent()) {
                         return [2 /*return*/, 'OK'];
@@ -260,10 +269,13 @@ var unfav = function (_a, h) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, user_database_1.default.unfavorite({
-                        emailParam: auth.credentials.email,
-                        clothingParam: payload.clothing,
-                    })];
+                case 0:
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
+                    return [4 /*yield*/, user_database_1.default.unfavorite({
+                            emailParam: auth.credentials.email,
+                            clothingParam: payload.clothing,
+                        })];
                 case 1:
                     if (_b.sent()) {
                         return [2 /*return*/, 'OK'];
@@ -281,10 +293,13 @@ var buy = function (_a, h) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, user_database_1.default.buy({
-                        emailParam: auth.credentials.email,
-                        clothingParam: payload.clothing,
-                    })];
+                case 0:
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
+                    return [4 /*yield*/, user_database_1.default.buy({
+                            emailParam: auth.credentials.email,
+                            clothingParam: payload.clothing,
+                        })];
                 case 1:
                     if (_b.sent()) {
                         return [2 /*return*/, 'OK'];

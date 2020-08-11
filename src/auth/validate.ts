@@ -7,7 +7,7 @@ export const validateJwt = async (
     request: Request,
     h: ResponseToolkit
 ) => {
-    console.log('JWT Auth', email)
+    console.log('JWT Auth')
     const user = await signin(email)
     console.log(user)
 

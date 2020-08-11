@@ -1,5 +1,5 @@
 const template = (
-    token
+  token
 ) => `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html data-editor-version="2" class="sg-campaigns" xmlns="http://www.w3.org/1999/xhtml">
 
@@ -356,38 +356,7 @@ const template = (
                                                                     style = "color: #f50057; font-size: 18px"> <strong>Y mucho más!</strong></span></div>
                                                                 <div style="font-family: inherit; text-align: center">
                                                                   <br></div>
-                                                                <div style="font-family: inherit; text-align: center">
-                                                                  <span style="color: #ffffff; font-size: 18px">Necesitas ayuda? Aquí estamos para ayudarte</span></div>
-                                                                <div style="font-family: inherit; text-align: center">
-                                                                  <span style="color: #ffffff; font-size: 18px">preparados para ayudar!&nbsp;</span></div>
-                                                                <div></div>
                                                               </div>
-                                                            </td>
-                                                          </tr>
-                                                        </tbody>
-                                                      </table>
-                                                      <table border="0" cellpadding="0" cellspacing="0" class="module"
-                                                        data-role="module-button" data-type="button" role="module"
-                                                        style="table-layout:fixed;" width="100%"
-                                                        data-muid="d050540f-4672-4f31-80d9-b395dc08abe1.1">
-                                                        <tbody>
-                                                          <tr>
-                                                            <td align="center" bgcolor="#6e6e6e" class="outer-td"
-                                                              style="padding:0px 0px 0px 0px;">
-                                                              <table border="0" cellpadding="0" cellspacing="0"
-                                                                class="wrapper-mobile" style="text-align:center;">
-                                                                <tbody>
-                                                                  <tr>
-                                                                    <td align="center" bgcolor="#f50057"
-                                                                      class="inner-td"
-                                                                      style="border-radius:6px; font-size:16px; text-align:center; background-color:inherit;">
-                                                                      <a href=""
-                                                                        style="background-color:#f50057; border:1px solid #f50057; border-color:#f50057; border-radius:0px; border-width:1px; color:#FFFFFF; display:inline-block; font-size:14px; font-weight:normal; letter-spacing:0px; line-height:normal; padding:12px 40px 12px 40px; text-align:center; text-decoration:none; border-style:solid; font-family:inherit;"
-                                                                        target="_blank">Soporte técnico</a>
-                                                                    </td>
-                                                                  </tr>
-                                                                </tbody>
-                                                              </table>
                                                             </td>
                                                           </tr>
                                                         </tbody>

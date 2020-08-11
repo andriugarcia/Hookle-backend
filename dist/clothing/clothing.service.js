@@ -55,6 +55,8 @@ var getStack = function (_a, h) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
                     filter = filterQuery_1.default(auth.credentials.filters, auth.credentials.genre);
                     return [4 /*yield*/, clothing_database_1.default.getStack(filter, {
                             emailParam: auth.credentials.email,
@@ -79,19 +81,25 @@ var getPopulars = function (_a, h) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    _b.trys.push([0, 2, , 3]);
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
+                    _b.label = 1;
+                case 1:
+                    _b.trys.push([1, 3, , 4]);
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
                     filter = filterQuery_1.default(auth.credentials.filters, auth.credentials.genre);
                     return [4 /*yield*/, clothing_database_1.default.getPopulars(filter, {
                             emailParam: auth.credentials.email,
                         })];
-                case 1:
+                case 2:
                     result = _b.sent();
                     return [2 /*return*/, result];
-                case 2:
+                case 3:
                     err_2 = _b.sent();
                     console.error(err_2);
                     throw Boom.badData('Error al obtener populares');
-                case 3: return [2 /*return*/];
+                case 4: return [2 /*return*/];
             }
         });
     });
@@ -104,7 +112,10 @@ var getHistorial = function (_a, h) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, clothing_database_1.default.getHistorial(params.page, {
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
+                    console.log(params.order);
+                    return [4 /*yield*/, clothing_database_1.default.getHistorial(params.order, {
                             emailParam: auth.credentials.email,
                             page: params.page,
                         })];
@@ -128,6 +139,8 @@ var getFavorites = function (_a, h) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
                     return [4 /*yield*/, clothing_database_1.default.getFavorites({
                             emailParam: auth.credentials.email,
                             page: params.page,
@@ -144,14 +157,42 @@ var getFavorites = function (_a, h) {
         });
     });
 };
-var getBought = function (_a, h) {
-    var auth = _a.auth, payload = _a.payload, params = _a.params;
+var getFavProduct = function (_a, h) {
+    var auth = _a.auth, params = _a.params;
     return __awaiter(this, void 0, void 0, function () {
         var result, err_5;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
+                    return [4 /*yield*/, clothing_database_1.default.getFavProduct({
+                            emailParam: auth.credentials.email,
+                            clothing: params.clothing,
+                        })];
+                case 1:
+                    result = _b.sent();
+                    return [2 /*return*/, result.length > 0];
+                case 2:
+                    err_5 = _b.sent();
+                    console.error(err_5);
+                    throw Boom.badData('Error al obtener el producto');
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
+var getBought = function (_a, h) {
+    var auth = _a.auth, payload = _a.payload, params = _a.params;
+    return __awaiter(this, void 0, void 0, function () {
+        var result, err_6;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    if (!auth.credentials.confirmed)
+                        throw Boom.forbidden('El usuario no está verificado');
                     return [4 /*yield*/, clothing_database_1.default.getBought({
                             emailParam: auth.credentials.email,
                             page: params.page,
@@ -160,13 +201,13 @@ var getBought = function (_a, h) {
                     result = _b.sent();
                     return [2 /*return*/, result];
                 case 2:
-                    err_5 = _b.sent();
-                    console.error(err_5);
+                    err_6 = _b.sent();
+                    console.error(err_6);
                     throw Boom.badData('Error al obtener los comprados');
                 case 3: return [2 /*return*/];
             }
         });
     });
 };
-exports.default = { getStack: getStack, getPopulars: getPopulars, getHistorial: getHistorial, getFavorites: getFavorites, getBought: getBought };
+exports.default = { getStack: getStack, getPopulars: getPopulars, getFavProduct: getFavProduct, getHistorial: getHistorial, getFavorites: getFavorites, getBought: getBought };
 //# sourceMappingURL=clothing.service.js.map

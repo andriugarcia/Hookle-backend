@@ -51,15 +51,15 @@ exports.validateJwt = function (_a, request, h) {
                 case 1:
                     user = _b.sent();
                     console.log(user);
-                    if (!user) {
+                    if (user) {
                         return [2 /*return*/, {
-                                isValid: false,
+                                isValid: true,
+                                credentials: user
                             }];
                     }
                     else {
                         return [2 /*return*/, {
-                                isValid: true,
-                                credentials: user
+                                isValid: false,
                             }];
                     }
                     return [2 /*return*/];

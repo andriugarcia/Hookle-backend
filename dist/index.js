@@ -52,7 +52,6 @@ var dotenv = require("dotenv");
 dotenv.config({ path: __dirname + '/.env' });
 var server = Hapi.server({
     port: process.env.PORT || 3010,
-    host: 'localhost',
     app: {},
 });
 var init = function () { return __awaiter(void 0, void 0, void 0, function () {

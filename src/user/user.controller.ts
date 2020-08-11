@@ -7,7 +7,7 @@ export default [
         path: '/getMe',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: userService.getMe,
@@ -17,7 +17,7 @@ export default [
         path: '/vote',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: userService.vote,
@@ -27,7 +27,7 @@ export default [
         path: '/updateFilters',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: userService.updateFilters,
@@ -37,7 +37,7 @@ export default [
         path: '/updateGenre',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: userService.updateGenre,
@@ -47,7 +47,7 @@ export default [
         path: '/fav',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: userService.fav,
@@ -57,7 +57,7 @@ export default [
         path: '/unfav',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: userService.unfav,
@@ -67,7 +67,7 @@ export default [
         path: '/buy',
         options: {
             auth: {
-                strategies: ['jwt', 'google'],
+                strategies: ['google', 'jwt'],
             }
         },
         handler: userService.buy,
