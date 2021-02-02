@@ -5,7 +5,7 @@ dotenv.config({ path: __dirname + '/.env' })
 
 // 'bolt://18.203.12.204', production
 var driver = neo4j.driver(
-    'bolt://localhost:7687',
+    'bolt://54.155.11.125',
     neo4j.auth.basic(process.env.DATABASE_USER, process.env.DATABASE_PASS)
 )
 
